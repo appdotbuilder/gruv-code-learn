@@ -1,8 +1,17 @@
 
+import { db } from '../db';
+import { badgesTable } from '../db/schema';
 import { type Badge } from '../schema';
 
-export async function getBadges(): Promise<Badge[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is fetching all available badges.
-  return Promise.resolve([]);
-}
+export const getBadges = async (): Promise<Badge[]> => {
+  try {
+    const results = await db.select()
+      .from(badgesTable)
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch badges:', error);
+    throw error;
+  }
+};

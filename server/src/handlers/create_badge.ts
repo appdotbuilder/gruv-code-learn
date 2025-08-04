@@ -1,17 +1,25 @@
 
+import { db } from '../db';
+import { badgesTable } from '../db/schema';
 import { type CreateBadgeInput, type Badge } from '../schema';
 
-export async function createBadge(input: CreateBadgeInput): Promise<Badge> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is creating a new badge for gamification.
-  // Should verify that the user has admin privileges.
-  return Promise.resolve({
-    id: 0, // Placeholder ID
-    name: input.name,
-    description: input.description,
-    icon: input.icon,
-    requirement_type: input.requirement_type,
-    requirement_value: input.requirement_value,
-    created_at: new Date()
-  } as Badge);
-}
+export const createBadge = async (input: CreateBadgeInput): Promise<Badge> => {
+  try {
+    // Insert badge record
+    const result = await db.insert(badgesTable)
+      .values({
+        name: input.name,
+        description: input.description,
+        icon: input.icon,
+        requirement_type: input.requirement_type,
+        requirement_value: input.requirement_value
+      })
+      .returning()
+      .execute();
+
+    return result[0];
+  } catch (error) {
+    console.error('Badge creation failed:', error);
+    throw error;
+  }
+};

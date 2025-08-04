@@ -1,7 +1,20 @@
 
+import { db } from '../db';
+import { lessonsTable } from '../db/schema';
+import { eq } from 'drizzle-orm';
+
 export async function deleteLesson(lessonId: number): Promise<boolean> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is deleting a lesson and all related content from the database.
-  // Should verify that the user has admin privileges.
-  return Promise.resolve(false);
+  try {
+    // Delete the lesson - cascading deletes will handle related content
+    const result = await db.delete(lessonsTable)
+      .where(eq(lessonsTable.id, lessonId))
+      .returning()
+      .execute();
+
+    // Return true if a lesson was deleted, false if not found
+    return result.length > 0;
+  } catch (error) {
+    console.error('Lesson deletion failed:', error);
+    throw error;
+  }
 }

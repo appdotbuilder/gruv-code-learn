@@ -1,9 +1,20 @@
 
+import { db } from '../db';
+import { quizQuestionsTable } from '../db/schema';
 import { type QuizQuestion } from '../schema';
+import { eq, asc } from 'drizzle-orm';
 
 export async function getQuizQuestions(quizId: number): Promise<QuizQuestion[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is fetching all questions for a specific quiz,
-  // ordered by order_index.
-  return Promise.resolve([]);
+  try {
+    const results = await db.select()
+      .from(quizQuestionsTable)
+      .where(eq(quizQuestionsTable.quiz_id, quizId))
+      .orderBy(asc(quizQuestionsTable.order_index))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch quiz questions:', error);
+    throw error;
+  }
 }

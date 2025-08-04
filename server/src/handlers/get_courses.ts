@@ -1,8 +1,19 @@
 
+import { db } from '../db';
+import { coursesTable } from '../db/schema';
+import { eq } from 'drizzle-orm';
 import { type Course } from '../schema';
 
-export async function getCourses(): Promise<Course[]> {
-  // This is a placeholder declaration! Real code should be implemented here.
-  // The goal of this handler is fetching all published courses from the database.
-  return Promise.resolve([]);
-}
+export const getCourses = async (): Promise<Course[]> => {
+  try {
+    const results = await db.select()
+      .from(coursesTable)
+      .where(eq(coursesTable.is_published, true))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch courses:', error);
+    throw error;
+  }
+};
